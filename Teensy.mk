@@ -127,8 +127,12 @@ MCU := $(shell echo ${CPUFLAGS} | sed -n -e 's/.*-mcpu=\([a-zA-Z0-9_-]*\).*/\1/p
 # may require additional patches for Windows support
 
 do_upload: override get_monitor_port=""
+
 AVRDUDE=@true
-RESET_CMD = nohup $(ARDUINO_DIR)/hardware/tools/teensy_post_compile -board=$(BOARD_TAG) -tools=$(abspath $(ARDUINO_DIR)/hardware/tools) -path=$(abspath $(OBJDIR)) -file=$(TARGET) > /dev/null ; $(ARDUINO_DIR)/hardware/tools/teensy_reboot
+
+RESET_CMD =  nohup $(ARDUINO_DIR)/hardware/tools/teensy_post_compile -board=$(BOARD_TAG) -tools=$(abspath $(ARDUINO_DIR)/hardware/tools) -path=$(abspath $(OBJDIR)) -file=$(TARGET) > /dev/null ; $(ARDUINO_DIR)/hardware/tools/teensy_reboot -s;\
+$(ARDUINO_DIR)/hardware/tools/teensy_loader_cli -v -w --mcu=$(BOARD_TAG) $(abspath $(OBJDIR))/$(TARGET).hex
+# > /dev/null
 
 ########################################################################
 # automatially include Arduino.mk for the user
